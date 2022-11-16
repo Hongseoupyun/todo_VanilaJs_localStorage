@@ -75,7 +75,9 @@ function DisplayTodos() {
     todoItem.appendChild(content);
     todoItem.appendChild(actions);
 
-    todoList.appendChild(todoItem);
+    todos.length < 1
+      ? todoList.appendChild(todoItem)
+      : todoList.insertBefore(todoItem, todoList.firstChild);
 
     if (todo.done) {
       todoItem.classList.add("done");
