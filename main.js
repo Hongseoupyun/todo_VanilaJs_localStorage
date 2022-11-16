@@ -38,80 +38,91 @@ function DisplayTodos() {
   const todoList = document.querySelector("#todo-list");
   todoList.innerHTML = "";
 
-  todos.forEach((todo) => {
-    const todoItem = document.createElement("div");
-    todoItem.classList.add("todo-item");
+  todos
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .forEach((todo) => {
+      const todoItem = document.createElement("div");
+      todoItem.classList.add("todo-item");
 
-    const label = document.createElement("label");
-    const input = document.createElement("input");
-    const span = document.createElement("span");
-    const content = document.createElement("div");
-    const actions = document.createElement("div");
-    const edit = document.createElement("button");
-    const deleteButton = document.createElement("button");
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      const span = document.createElement("span");
+      const content = document.createElement("div");
+      const actions = document.createElement("div");
+      const edit = document.createElement("button");
+      const deleteButton = document.createElement("button");
 
-    input.type = "checkbox";
-    input.checked = todo.done;
-    span.classList.add("bubble");
+      input.type = "checkbox";
+      input.checked = todo.done;
+      span.classList.add("bubble");
 
-    todo.category == "personal"
-      ? span.classList.add("personal")
-      : span.classList.add("business");
+      todo.category == "personal"
+        ? span.classList.add("personal")
+        : span.classList.add("business");
 
-    content.classList.add("todo-content");
-    actions.classList.add("actions");
-    edit.classList.add("edit");
-    deleteButton.classList.add("delete");
+      content.classList.add("todo-content");
+      actions.classList.add("actions");
+      edit.classList.add("edit");
+      deleteButton.classList.add("delete");
 
-    content.innerHTML = `<input type="text" value="${todo.content}" readonly>`;
-    edit.innerHTML = "Edit";
-    deleteButton.innerHTML = "Delete";
+      content.innerHTML = `<input type="text" value="${todo.content}" readonly>`;
+      edit.innerHTML = "Edit";
+      deleteButton.innerHTML = "Delete";
 
-    label.appendChild(input);
-    label.appendChild(span);
-    actions.appendChild(edit);
-    actions.appendChild(deleteButton);
-    todoItem.appendChild(label);
-    todoItem.appendChild(content);
-    todoItem.appendChild(actions);
+      label.appendChild(input);
+      label.appendChild(span);
+      actions.appendChild(edit);
+      actions.appendChild(deleteButton);
+      todoItem.appendChild(label);
+      todoItem.appendChild(content);
+      todoItem.appendChild(actions);
 
-    todos.length < 1
-      ? todoList.appendChild(todoItem)
-      : todoList.insertBefore(todoItem, todoList.firstChild);
+      todoList.appendChild(todoItem);
+      /*
+      How to prepend todo item to the top of the list 
 
-    if (todo.done) {
-      todoItem.classList.add("done");
-    }
+      solution1) use .sort() method to sort the array of todos by createdAt property
+      solutio2) use itary operator to check the length of the todos like below
 
-    input.addEventListener("change", (e) => {
-      todo.done = e.target.checked;
-      localStorage.setItem("todos", JSON.stringify(todos));
+      todos.length < 1
+        ? todoList.appendChild(todoItem)
+        : todoList.insertBefore(todoItem, todoList.firstChild);
+        
+        */
 
       if (todo.done) {
         todoItem.classList.add("done");
-      } else {
-        todoItem.classList.remove("done");
       }
 
-      DisplayTodos();
-    });
+      input.addEventListener("change", (e) => {
+        todo.done = e.target.checked;
+        localStorage.setItem("todos", JSON.stringify(todos));
 
-    edit.addEventListener("click", (e) => {
-      const input = content.querySelector("input");
-      input.removeAttribute("readonly");
-      input.focus();
-      input.addEventListener("blur", (e) => {
-        input.setAttribute("readonly", true);
-        todo.content = e.target.value;
+        if (todo.done) {
+          todoItem.classList.add("done");
+        } else {
+          todoItem.classList.remove("done");
+        }
+
+        DisplayTodos();
+      });
+
+      edit.addEventListener("click", (e) => {
+        const input = content.querySelector("input");
+        input.removeAttribute("readonly");
+        input.focus();
+        input.addEventListener("blur", (e) => {
+          input.setAttribute("readonly", true);
+          todo.content = e.target.value;
+          localStorage.setItem("todos", JSON.stringify(todos));
+          DisplayTodos();
+        });
+      });
+
+      deleteButton.addEventListener("click", () => {
+        todos = todos.filter((t) => t != todo);
         localStorage.setItem("todos", JSON.stringify(todos));
         DisplayTodos();
       });
     });
-
-    deleteButton.addEventListener("click", () => {
-      todos = todos.filter((t) => t != todo);
-      localStorage.setItem("todos", JSON.stringify(todos));
-      DisplayTodos();
-    });
-  });
 }
